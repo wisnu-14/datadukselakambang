@@ -1,0 +1,65 @@
+.form-container {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table th {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+}
+
+.btn-custom {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+
+    .form-group label,
+    .btn {
+        font-size: 14px;
+    }
+
+    table th,
+    table td {
+        font-size: 12px;
+    }
+}
+
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #ccc !important;
+}
+
+.no {
+    width: 15px;
+}
+
+/* Menambahkan transisi pada accordion */
+.accordion-button {
+    transition: all 0.3s ease;
+}
+
+.accordion-collapse {
+    transition: height 0.3s ease;
+}
+
+/* Membuat header accordion lebih halus */
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    border-color: #ddd;
+}
+
+.accordion-button.collapsed {
+    background-color: #ffffff;
+    border-color: #ddd;
+}

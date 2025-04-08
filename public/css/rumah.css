@@ -1,0 +1,53 @@
+.btn-custom {
+    border-radius: 5px;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table th {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+}
+
+.form-control,
+.btn {
+    border-radius: 5px;
+}
+
+img {
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #ccc !important;
+}
+
+/* Menambahkan transisi pada accordion */
+.accordion-button {
+    transition: all 0.3s ease;
+}
+
+.accordion-collapse {
+    transition: height 0.3s ease;
+}
+
+/* Membuat header accordion lebih halus */
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    border-color: #ddd;
+}
+
+.accordion-button.collapsed {
+    background-color: #ffffff;
+    border-color: #ddd;
+}
+
+.no {
+    width: 15px;
+}

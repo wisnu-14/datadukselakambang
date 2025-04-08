@@ -1,0 +1,130 @@
+@media print {
+    @page {
+        size: landscape;
+    }
+
+    .logo-print {
+        display: none;
+    }
+
+    .aksi {
+        display: none;
+    }
+
+    form {
+        display: none;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        page-break-inside: avoid;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+
+    th,
+    td {
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+    }
+
+    /* Pastikan konten tabel tidak terpotong antar halaman */
+    tr {
+        page-break-inside: avoid;
+    }
+}
+
+h1 {
+    font-size: 24px;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+th,
+td {
+    text-align: center;
+    padding: 12px;
+    white-space: nowrap;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+td {
+    font-size: 14px;
+    background-color: #f8f9fa;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 15px;
+    background-color: white;
+    margin-top: 100px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #ddd;
+}
+
+tbody tr:hover {
+    background-color: #e9ecef;
+    transition: 0.3s;
+}
+
+h1 {
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #ccc !important;
+}
+
+.main {
+    margin-top: 100px;
+}
+
+.navbar {
+    background-color: rgb(233, 233, 233);
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.26);
+    -webkit-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.26);
+}
+
+.no {
+    width: 15px;
+}
+.text-role {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    z-index: 9999;
+    margin-right: 10px;
+    font-size: 12px;
+}

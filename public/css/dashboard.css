@@ -1,0 +1,19 @@
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    background-color: rgb(233, 233, 233);
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.26);
+    -webkit-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.26);
+    -moz-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.26);
+}
+
+.main {
+    margin-top: 100px;
+}
