@@ -121,12 +121,12 @@ function loginUser($username, $password)
 function logoutUser()
 {
     global $pdo;
-    
-    if (isset($_SESSION['user_id'])) {
-     $userId = $_SESSION['user_id'];
 
-     $stmt = $pdo->prepare("UPDATE users SET session_token = NULL WHERE id = ?");
-     $stmt->execute([$userId]);
+    if (isset($_SESSION['user_id'])) {
+        $userId = $_SESSION['user_id'];
+
+        $stmt = $pdo->prepare("UPDATE users SET session_token = NULL WHERE id = ?");
+        $stmt->execute([$userId]);
     }
     session_unset();
     session_destroy();
@@ -142,5 +142,3 @@ function deleteUser($id)
     logAktivitas('Menghapus user');
     return true;
 }
-
-

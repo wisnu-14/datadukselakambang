@@ -137,13 +137,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </li>
                     <?php if ($_SESSION['role'] == 'admin'): ?>
                         <li class="nav-item">
-                        <a href="../dashboard/index.php" class="nav-link">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-workspace" viewBox="0 0 16 16">
-                                 <path d="M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-5.95a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
-                                 <path d="M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.4 5.4 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2z"/>
-                            </svg>
-                        </a>
-                    </li>
+                            <a href="../dashboard/index.php" class="nav-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-workspace" viewBox="0 0 16 16">
+                                    <path d="M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-5.95a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                                    <path d="M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.4 5.4 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2z" />
+                                </svg>
+                            </a>
+                        </li>
                     <?php else: ?>
                     <?php endif; ?>
                 </ul>
@@ -154,43 +154,43 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <h1 class="text-center">Dashboard Menu</h1>
         <div class="table-container mt-5">
             <div class="row">
-            <div class="col-md-4 mt-3">
-                <div class="card bg-primary text-white text-center p-3">
-                    <h5>Total Penerima BLT</h5>
-                    <h2><?= $blt['total_blt'] ?></h2>
+                <div class="col-md-4 mt-3">
+                    <div class="card bg-primary text-white text-center p-3">
+                        <h5>Total Penerima BLT</h5>
+                        <h2><?= $blt['total_blt'] ?></h2>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <div class="card bg-success text-white text-center p-3">
+                        <h5>Total Penerima RTLH</h5>
+                        <h2><?= $rtlh['total_rtlh'] ?></h2>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <div class="card bg-warning text-white text-center p-3">
+                        <h5>Total Penerima PKH</h5>
+                        <h2><?= $pkh['total_pkh'] ?></h2>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <div class="card bg-danger text-white text-center p-3">
+                        <h5>Total Penerima Sembako</h5>
+                        <h2><?= $sembako['total_sembako'] ?></h2>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <div class="card bg-secondary text-white text-center p-3">
+                        <h5>Total Rumah</h5>
+                        <h2><?= $rumah['total_rumah'] ?></h2>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <div class="card bg-info text-white text-center p-3">
+                        <h5>Lainnya</h5>
+                        <h2><?= $lainnya['total_lainnya'] ?></h2>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4 mt-3">
-                <div class="card bg-success text-white text-center p-3">
-                    <h5>Total Penerima RTLH</h5>
-                    <h2><?= $rtlh['total_rtlh'] ?></h2>
-                </div>
-            </div>
-            <div class="col-md-4 mt-3">
-                <div class="card bg-warning text-white text-center p-3">
-                    <h5>Total Penerima PKH</h5>
-                    <h2><?= $pkh['total_pkh'] ?></h2>
-                </div>
-            </div>
-            <div class="col-md-4 mt-3">
-                <div class="card bg-danger text-white text-center p-3">
-                    <h5>Total Penerima Sembako</h5>
-                    <h2><?= $sembako['total_sembako'] ?></h2>
-                </div>
-            </div>
-            <div class="col-md-4 mt-3">
-                <div class="card bg-secondary text-white text-center p-3">
-                    <h5>Total Rumah</h5>
-                    <h2><?= $rumah['total_rumah'] ?></h2>
-                </div>
-            </div>
-            <div class="col-md-4 mt-3">
-                <div class="card bg-info text-white text-center p-3">
-                    <h5>Lainnya</h5>
-                    <h2><?= $lainnya['total_lainnya'] ?></h2>
-                </div>
-            </div>
-        </div>
         </div>
 
         <div class="container mt-5 table-container">
@@ -269,8 +269,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                         <div class="mb-2">
                                             <label class="form-label">Role</label>
                                             <select name="role" class="form-control">
-                                                <option value="pengisi" <?= ($user['role'] == 'pengisi') ? 'selected' : ''; ?>>Pengisi</option>
+                                                <option value="super_admin" <?= ($user['role'] == 'super_admin') ? 'selected' : ''; ?>>Super Admin</option>
                                                 <option value="admin" <?= ($user['role'] == 'admin') ? 'selected' : ''; ?>>Admin</option>
+                                                <option value="pengisi" <?= ($user['role'] == 'pengisi') ? 'selected' : ''; ?>>Pengisi</option>
                                             </select>
                                         </div>
                                         <button type="submit" class="btn btn-success">Update User</button>
@@ -282,40 +283,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </tbody>
             </table>
         </div>
-        
+
         <div class="container py-5">
-    <h3 class="mb-4 text-center fw-bold">📋 Riwayat Aktivitas Pengguna</h3>
-    
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover shadow-sm bg-white">
-            <thead class="text-center">
-                <tr>
-                    <th>No</th>
-                    <th>Username</th>
-                    <th>Aksi</th>
-                    <th>Waktu</th>
-                </tr>
-            </thead>
-            <tbody class="align-middle">
-                <?php if (count($logs) > 0): ?>
-                    <?php foreach ($logs as $i => $log): ?>
+            <h3 class="mb-4 text-center fw-bold">📋 Riwayat Aktivitas Pengguna</h3>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover shadow-sm bg-white">
+                    <thead class="text-center">
                         <tr>
-                            <td class="text-center"><?= $i + 1 ?></td>
-                            <td><?= htmlspecialchars($log['username']) ?></td>
-                            <td><?= htmlspecialchars($log['action']) ?></td>
-                            <td><?= date('d-m-Y H:i:s', strtotime($log['timestamp'])) ?></td>
+                            <th>No</th>
+                            <th>Username</th>
+                            <th>Aksi</th>
+                            <th>Waktu</th>
                         </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">Belum ada aktivitas.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
-        
+                    </thead>
+                    <tbody class="align-middle">
+                        <?php if (count($logs) > 0): ?>
+                            <?php foreach ($logs as $i => $log): ?>
+                                <tr>
+                                    <td class="text-center"><?= $i + 1 ?></td>
+                                    <td><?= htmlspecialchars($log['username']) ?></td>
+                                    <td><?= htmlspecialchars($log['action']) ?></td>
+                                    <td><?= date('d-m-Y H:i:s', strtotime($log['timestamp'])) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Belum ada aktivitas.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="table-container mt-5">
             <h3 class="mt-5">Data Pengunjung</h3>
             <table class="table table-bordered">
