@@ -362,8 +362,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 <div class="mb-3">
                                     <select name="role" class="form-control rounded-0">
                                         <option value="" selected disabled>Role</option>
-                                        <option value="pengisi">Pengisi</option>
                                         <option value="admin">Admin</option>
+                                        <option value="super_admin">Super Admin</option>
+                                        <option value="pengisi">Pengisi</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
