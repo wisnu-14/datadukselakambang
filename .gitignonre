@@ -1,3 +1,8 @@
-vendor
-app/config
-app/database
+# Folder Composer (PHP)
+vendor/
+
+# Konfigurasi aplikasi
+app/config/
+
+# Database lokal atau file-file sejenis
+app/database/

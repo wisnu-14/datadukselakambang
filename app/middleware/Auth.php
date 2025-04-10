@@ -1,6 +1,4 @@
 <?php
-require '../../app/controller/AuthController.php';
-
 function authMiddleware()
 {
     global $pdo;
@@ -46,13 +44,12 @@ function authMiddleware()
  * Middleware untuk halaman khusus admin.
  * Jika bukan admin, redirect ke halaman lain.
  */
-function adminMiddleware() {
+function adminMiddleware()
+{
     authMiddleware(); // Pastikan pengguna sudah login
-    
-    if ($_SESSION['role'] !== 'admin') {
-        header("Location: ../../layout/app.php?pages=rekap");
+
+    if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'super_admin') {
+        echo "<script>alert('Anda tidak memiliki hak untuk mengakses halaman ini!');window.location.href='../../views/rekap/rekap.php';</script>";
         exit();
     }
 }
-
-?>

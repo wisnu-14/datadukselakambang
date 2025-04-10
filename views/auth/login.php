@@ -8,7 +8,7 @@ guestMiddleware();
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $result = loginUser($_POST['username'], $_POST['password']);
     if ($result === true) {
-        header("Location: ../auth/redirect.php");
+        // header("Location: ../auth/redirect.php");
         exit();
     } else {
         $_SESSION['error'] = $result;

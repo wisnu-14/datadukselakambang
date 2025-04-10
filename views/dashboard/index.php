@@ -1,43 +1,32 @@
 <?php
 session_start();
-// error_reporting(1);
-// require '../../app/controller/AuthController.php';
+error_reporting(1);
+require '../../app/controller/AuthController.php';
 require '../../app/middleware/Auth.php';
 require '../../app/controller/CountController.php';
-logUserVisit();
 adminMiddleware();
+logUserVisit();
 generateCsrfToken();
-// Mengambil data user dari database
 $users = $pdo->query("SELECT * FROM users")->fetchAll(PDO::FETCH_ASSOC);
 
 $stmt = $pdo->query("SELECT * FROM activity_logs ORDER BY timestamp DESC");
 $logs = $stmt->fetchAll();
-// Mengambil data pengunjung dari database
-// Ambil data yang belum dihapus
 $visitors = $pdo->query("SELECT * FROM visitors WHERE deleted_at IS NULL ORDER BY visit_time DESC")->fetchAll(PDO::FETCH_ASSOC);
 
-// Cek jumlah data
 if (count($visitors) > 100) {
-    // Hitung berapa yang perlu dihapus (soft delete)
     $excess = count($visitors) - 100;
 
-    // Ambil ID data tertua yang akan disoft delete
     $stmt = $pdo->prepare("SELECT id FROM visitors WHERE deleted_at IS NULL ORDER BY visit_time ASC LIMIT :limit");
     $stmt->bindValue(':limit', $excess, PDO::PARAM_INT);
     $stmt->execute();
     $oldIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Soft delete data dengan update kolom deleted_at
     if (!empty($oldIds)) {
         $in  = str_repeat('?,', count($oldIds) - 1) . '?';
         $sql = "UPDATE visitors SET deleted_at = NOW() WHERE id IN ($in)";
         $pdo->prepare($sql)->execute($oldIds);
     }
 }
-
-
-// superAdmin();
-
 $blt = jumlahBlt();
 $rtlh = jumlahRtlh();
 $sembako = jumlahSembako();
@@ -48,24 +37,9 @@ $rumah = jumlahRumah();
 $id = $_GET['id'];
 if (isset($id)) {
     deleteUser($id);
+    $_SESSION['success_message'] = "Berhasil hapus data!";
     header('Location: index.php');
 }
-
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (!validateCsrfToken($_POST['csrf_token'])) {
-        die("CSRF token tidak valid.");
-    }
-
-    $result = registerUser($_POST['nik'], $_POST['nama'], $_POST['username'], $_POST['password'], $_POST['role']);
-    if ($result === true) {
-        echo "<script>alert('Berhasil menambah akun!');window.location.href='index.php';</script>";
-        exit();
-    } else {
-        $_SESSION['error'] = $result;
-    }
-}
-
 
 ?>
 
@@ -104,8 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             Data
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="?pages=data_penduduk">Data Penduduk</a></li>
-                            <li><a class="dropdown-item" href="?pages=data_keluarga">Data Keluarga</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=data_penduduk">Data Penduduk</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=data_keluarga">Data Keluarga</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -113,9 +87,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             Tempat tinggal
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="?pages=kondisi_rumah">Rumah</a></li>
-                            <li><a class="dropdown-item" href="?pages=kamar_mandi">Kamar Mandi</a></li>
-                            <li><a class="dropdown-item" href="?pages=data_listrik">Listrik</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=kondisi_rumah">Rumah</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=kamar_mandi">Kamar Mandi</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=data_listrik">Listrik</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -123,19 +97,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             Kepemilikan
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="?pages=data_barang">Barang</a></li>
-                            <li><a class="dropdown-item" href="?pages=data_ternak">Ternak</a></li>
-                            <li><a class="dropdown-item" href="?pages=tanaman_buah">Tanaman Buah</a></li>
-                            <li><a class="dropdown-item" href="?pages=tanaman_pangan">Tanaman Pangan</a></li>
-                            <li><a class="dropdown-item" href="?pages=tanaman_obat">Tanaman Obat</a></li>
-                            <li><a class="dropdown-item" href="?pages=data_air">Sumber Air</a></li>
-                            <li><a class="dropdown-item" href="?pages=data_usaha">Usaha</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=data_barang">Barang</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=data_ternak">Ternak</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=tanaman_buah">Tanaman Buah</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=tanaman_pangan">Tanaman Pangan</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=tanaman_obat">Tanaman Obat</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=data_air">Sumber Air</a></li>
+                            <li><a class="dropdown-item" href="../layout/app.php?pages=data_usaha">Usaha</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="../auth/logout.php">Logout</a>
                     </li>
-                    <?php if ($_SESSION['role'] == 'admin'): ?>
+                    <?php if ($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'SuperAdmin'): ?>
+
                         <li class="nav-item">
                             <a href="../dashboard/index.php" class="nav-link">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-workspace" viewBox="0 0 16 16">
@@ -193,100 +168,116 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </div>
 
-        <div class="container mt-5 table-container">
-            <?php if (isset($_SESSION['success_message'])): ?>
-                <div class="alert alert-success" id='loginSuccess'>
-                    <?php
-                    echo $_SESSION['success_message'];
-                    unset($_SESSION['success_message']);
-                    ?>
-                </div>
-            <?php endif; ?>
-            <h2>Manage Users</h2>
-            <button type="button" class="btn btn-primary mb-3 border-0" data-bs-toggle="modal" data-bs-target="#inputDataModal">
-                <i class="bi bi-plus-square"></i> Add
-            </button>
-            <table class="table table-bordered table-responsive">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>No</th>
-                        <th>ID Users</th>
-                        <th>NIK</th>
-                        <th>Nama</th>
-                        <th>Username</th>
-                        <th>Role</th>
-                        <th>Password</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $no = 1;
-                    foreach ($users as $user):
-                    ?>
+        <?php if ($_SESSION['role'] == 'SuperAdmin'): ?>
+            <div class="container mt-5 table-container">
+                <?php if (isset($_SESSION['success_message'])): ?>
+                    <div class="alert alert-success" id='loginSuccess'>
+                        <?php
+                        echo $_SESSION['success_message'];
+                        unset($_SESSION['success_message']);
+                        ?>
+                    </div>
+                <?php endif; ?>
+                <?php if (isset($_SESSION['errors_message'])): ?>
+                    <div class="alert alert-danger" id=''>
+                        <?php
+                        echo $_SESSION['errors_message'];
+                        unset($_SESSION['errors_message']);
+                        ?>
+                    </div>
+                <?php endif; ?>
+                <h2>Manage Users</h2>
+                <button type="button" class="btn btn-primary mb-3 border-0" data-bs-toggle="modal" data-bs-target="#inputDataModal">
+                    <i class="bi bi-plus-square"></i> Add
+                </button>
+                <table class="table table-bordered table-responsive">
+                    <thead class="thead-dark">
                         <tr>
-                            <td><?= $no++; ?></td>
-                            <td><?= $user['id']; ?></td>
-                            <td><?= $user['nik']; ?></td>
-                            <td><?= $user['nama']; ?></td>
-                            <td><?= $user['username']; ?></td>
-                            <td><?= $user['role']; ?></td>
-                            <td><?= str_repeat('*', strlen($user['password'])); ?></td>
-                            <td class="d-flex">
-                                <button class="btn btn-sm btn-outline-primary mx-1" data-bs-toggle="collapse" data-bs-target="#editForm<?= $user['id']; ?>">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <a href="index.php?id=<?= $user['id']; ?>" class="btn mx-1 btn-outline-primary" onclick="return confirm('YAKIN HAPUS DATA?!!');" class="">
-                                    <i class="bi bi-trash" style="align-items: center; justify-content: center; display: flex;"></i>
-                                </a>
-                            </td>
+                            <th>No</th>
+                            <th>ID</th>
+                            <th>NIK</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Password</th>
+                            <th>Aksi</th>
                         </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $no = 1;
+                        foreach ($users as $user):
+                        ?>
+                            <tr>
+                                <td><?= $no++; ?></td>
+                                <td><?= $user['id']; ?></td>
+                                <td><?= $user['nik']; ?></td>
+                                <td><?= $user['nama']; ?></td>
+                                <td><?= $user['email']; ?></td>
+                                <td><?= $user['username']; ?></td>
+                                <td><?= $user['role']; ?></td>
+                                <td><?= str_repeat('*', strlen($user['password'])); ?></td>
+                                <td class="d-flex">
+                                    <button class="btn btn-sm btn-outline-primary mx-1" data-bs-toggle="collapse" data-bs-target="#editForm<?= $user['id']; ?>">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <a href="index.php?id=<?= $user['id']; ?>" class="btn mx-1 btn-outline-primary" onclick="return confirm('YAKIN HAPUS DATA?!!');" class="">
+                                        <i class="bi bi-trash" style="align-items: center; justify-content: center; display: flex;"></i>
+                                    </a>
+                                </td>
+                            </tr>
 
-                        <!-- Edit Data Modal -->
-                        <tr id="editForm<?= $user['id']; ?>" class="collapse">
-                            <td colspan="8">
-                                <div class="card p-3">
-                                    <h5>Edit Akun</h5>
-                                    <form action="edit_process.php" method="POST">
-                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                        <input type="hidden" name="id" value="<?= $user['id']; ?>">
-                                        <div class="mb-2">
-                                            <label class="form-label">Nik</label>
-                                            <input type="text" name="nik" class="form-control" required maxlength="16" value="<?= $user['nik']; ?>">
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Nama</label>
-                                            <input type="text" class="form-control" name="nama" required value="<?= $user['nama']; ?>">
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Username</label>
-                                            <input type="text" class="form-control" name="username" required value="<?= $user['username']; ?>">
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Password (Kosongkan jika tidak ingin mengubah)</label>
-                                            <input type="password" class="form-control" name="password">
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Role</label>
-                                            <select name="role" class="form-control">
-                                                <option value="super_admin" <?= ($user['role'] == 'super_admin') ? 'selected' : ''; ?>>Super Admin</option>
-                                                <option value="admin" <?= ($user['role'] == 'admin') ? 'selected' : ''; ?>>Admin</option>
-                                                <option value="pengisi" <?= ($user['role'] == 'pengisi') ? 'selected' : ''; ?>>Pengisi</option>
-                                            </select>
-                                        </div>
-                                        <button type="submit" class="btn btn-success">Update User</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+                            <!-- Edit Data Modal -->
+                            <tr id="editForm<?= $user['id']; ?>" class="collapse">
+                                <td colspan="8">
+                                    <div class="card p-3">
+                                        <h5>Edit Akun</h5>
+                                        <form action="edit_process.php" method="POST">
+                                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                            <input type="hidden" name="id" value="<?= $user['id']; ?>">
+                                            <div class="mb-2">
+                                                <label class="form-label">Nik</label>
+                                                <input type="text" name="nik" class="form-control" required maxlength="16" value="<?= $user['nik']; ?>">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Nama</label>
+                                                <input type="text" class="form-control" name="nama" required value="<?= $user['nama']; ?>">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">email</label>
+                                                <input type="email" class="form-control" name="email" required value="<?= $user['email']; ?>">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Username</label>
+                                                <input type="text" class="form-control" name="username" required value="<?= $user['username']; ?>">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Password (Kosongkan jika tidak ingin mengubah)</label>
+                                                <input type="password" class="form-control" name="password">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Role</label>
+                                                <select name="role" class="form-control">
+                                                    <option value="SuperAdmin" <?= ($user['role'] == 'SuperAdmin') ? 'selected' : ''; ?>>Super Admin</option>
+                                                    <option value="admin" <?= ($user['role'] == 'admin') ? 'selected' : ''; ?>>Admin</option>
+                                                    <option value="pengisi" <?= ($user['role'] == 'pengisi') ? 'selected' : ''; ?>>Pengisi</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-success">Update User</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+        <?php endif; ?>
 
         <div class="container py-5">
             <h3 class="mb-4 text-center fw-bold">📋 Riwayat Aktivitas Pengguna</h3>
-
             <div class="table-responsive">
                 <table class="table table-bordered table-hover shadow-sm bg-white">
                     <thead class="text-center">
@@ -317,31 +308,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </div>
 
-        <div class="table-container mt-5">
-            <h3 class="mt-5">Data Pengunjung</h3>
-            <table class="table table-bordered">
-                <thead class="">
-                    <tr>
-                        <th>No</th>
-                        <th>Alamat IP</th>
-                        <th>Device</th>
-                        <th>Waktu Kunjungan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $no = 1;
-                    foreach ($visitors as $visitor): ?>
+        <?php if ($_SESSION['role'] == 'SuperAdmin'): ?>
+            <div class="table-container mt-5">
+                <h3 class="mt-5">Data Pengunjung</h3>
+                <table class="table table-bordered">
+                    <thead class="">
                         <tr>
-                            <td><?= $no++; ?></td>
-                            <td><?= $visitor['ip_address'] ?></td>
-                            <td><?= $visitor['device_info'] ?></td>
-                            <td><?= $visitor['visit_time'] ?></td>
+                            <th>No</th>
+                            <th>Alamat IP</th>
+                            <th>Device</th>
+                            <th>Waktu Kunjungan</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $no = 1;
+                        foreach ($visitors as $visitor): ?>
+                            <tr>
+                                <td><?= $no++; ?></td>
+                                <td><?= $visitor['ip_address'] ?></td>
+                                <td><?= $visitor['device_info'] ?></td>
+                                <td><?= $visitor['visit_time'] ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+        <?php endif; ?>
+
         <div class="modal fade" id="inputDataModal" tabindex="-1" aria-labelledby="inputDataModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -350,39 +345,42 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="" method="POST">
-                            <div class="modal-body">
-                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                <div class="mb-3">
-                                    <input type="text" name="nik" class="form-control rounded-0" placeholder="Nik" required maxlength="16">
-                                </div>
-                                <div class="mb-3">
-                                    <input type="text" name="nama" class="form-control rounded-0" placeholder="Nama" required>
-                                </div>
-                                <div class="mb-3">
-                                    <select name="role" class="form-control rounded-0">
-                                        <option value="" selected disabled>Role</option>
-                                        <option value="admin">Admin</option>
-                                        <option value="super_admin">Super Admin</option>
-                                        <option value="pengisi">Pengisi</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <input type="username" name="username" class="form-control rounded-0" placeholder="Username" required>
-                                </div>
-                                <div class="mb-3">
-                                    <input type="password" name="password" class="form-control rounded-0" placeholder="Password" required>
-                                </div>
+                        <form method="POST" action="create_process.php">
+                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                            <div class="mb-3">
+                                <label for="nik" class="form-label">NIK</label>
+                                <input type="text" class="form-control" id="nik" name="nik" required maxlength="16" pattern="\d{16}">
                             </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">Add User</button>
+                            <div class="mb-3">
+                                <label for="nama" class="form-label">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="nama" name="nama" required>
                             </div>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password (min. 8 karakter)</label>
+                                <input type="password" class="form-control" id="password" name="password" required minlength="8">
+                            </div>
+                            <div class="mb-3">
+                                <label for="role" class="form-label">Peran</label>
+                                <select class="form-select" name="role" id="role" required>
+                                    <option value="">-- Pilih Role --</option>
+                                    <option value="SuperAdmin">SuperAdmin</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="pengisi">pengisi</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Simpan</button>
                         </form>
                     </div>
                 </div>
-
             </div>
-
             <?php require '../../app/config/cdn/js.php'; ?>
 </body>
 

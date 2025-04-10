@@ -3,50 +3,63 @@ session_start();
 require '../../app/database/connection.php';
 require '../../app/controller/LogsController.php';
 
-// Fungsi untuk membuat CSRF token
-// Fungsi untuk membuat CSRF token
-if (!function_exists('generateCsrfToken')) {
-    function generateCsrfToken()
-    {
-        if (empty($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-        }
+function generateCsrfToken()
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
 }
-
-// Fungsi untuk validasi CSRF token
-if (!function_exists('validateCsrfToken')) {
-    function validateCsrfToken($token)
-    {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
-    }
+function validateCsrfToken($token)
+{
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
-
-
-// Fungsi registrasi user
-function registerUser($nik, $nama, $username, $password, $role)
+function registerUser($nik, $nama, $email, $username, $password, $role)
 {
     global $pdo;
 
-    if (!preg_match('/^\d{16}$/', $nik)) {
-        return "NIK harus 16 digit angka.";
+    $nik = trim($nik);
+    $nama = htmlspecialchars(trim($nama));
+    $email = htmlspecialchars(trim($email));
+    $username = trim($username);
+    $role = strtolower(trim($role));
+
+    if (!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password)) {
+        $_SESSION['errors_message'] = "Password harus minimal 8 karakter, mengandung 1 huruf kapital, 1 angka, dan 1 karakter spesial.";
+        return false;
     }
 
-    if (strlen($password) < 8) {
-        return "Password minimal 8 karakter.";
+    $stmt = $pdo->prepare("SELECT nik, username, email FROM users WHERE nik = ? OR username = ? OR email = ?");
+    $stmt->execute([$nik, $username, $email]);
+    $user = $stmt->fetch();
+
+    if ($user) {
+        if ($user['nik'] == $nik) {
+            $_SESSION['errors_message'] = "NIK sudah terdaftar.";
+            return false;
+        } elseif ($user['username'] == $username) {
+            $_SESSION['errors_message'] = "Username sudah terdaftar.";
+            return false;
+        } elseif ($user['email'] == $email) {
+            $_SESSION['errors_message'] = "Email sudah terpakai.";
+            return false;
+        }
     }
 
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO users (nik, nama, username, password, role) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$nik, $nama, $username, $hashedPassword, $role]);
-        logAktivitas('Menambahkan user');
+        $stmt = $pdo->prepare("INSERT INTO users (nik,nama,email,username, password, role) VALUES (?, ?, ?, ?, ?,?)");
+        $stmt->execute([$nik, $nama, $email, $username, $hashedPassword, $role]);
+
+        logAktivitas("Menambahkan user baru: $username ($role)");
         return true;
     } catch (PDOException $e) {
-        return "Username atau NIK sudah terdaftar.";
+        error_log("Register Error: " . $e->getMessage());
+        return "Terjadi kesalahan saat registrasi.";
     }
 }
+
+
 
 function editUser($request)
 {
@@ -80,44 +93,33 @@ function editUser($request)
         logAktivitas('Edit user');
     }
 }
-// Fungsi login user
 function loginUser($username, $password)
 {
     global $pdo;
-
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
-
-        // Cek apakah akun sudah login di perangkat lain
-        if (!empty($user['session_token'])) {
-            return "Akun sedang digunakan di perangkat lain.";
-        }
-
-        // Generate session token baru
         $token = bin2hex(random_bytes(32));
-
-        // Simpan ke session
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];
+        $_SESSION['pending_user'] = [
+            'id' => $user['id'],
+            'username' => $user['username'],
+            'email' => $user['email'],
+            'role' => $user['role']
+        ];
         $_SESSION['session_token'] = $token;
         $_SESSION['last_activity'] = time(); // 🕒 waktu login
 
         // Simpan ke database
         $stmt = $pdo->prepare("UPDATE users SET session_token = ? WHERE id = ?");
         $stmt->execute([$token, $user['id']]);
-        logAktivitas('Login ke sistem');
-        return true;
+        header("Location: ../../views/auth/otp/send_otp.php");
+        exit;
+    } else {
+        return "Username atau password salah.";
     }
-
-    return "Username atau password salah.";
 }
-
-
-// Fungsi logout user
 function logoutUser()
 {
     global $pdo;
@@ -132,8 +134,6 @@ function logoutUser()
     session_destroy();
     logAktivitas('Logout dari sistem');
 }
-
-
 function deleteUser($id)
 {
     global $pdo;
