@@ -21,7 +21,6 @@ function delete($id)
     global $pdo;
     $stmt = $pdo->prepare("DELETE FROM barang WHERE id = ?");
     $stmt->execute([$id]);
-    logAktivitas('Menghapus data barang');
 }
 
 function showNoRumah()
@@ -45,7 +44,6 @@ function create(array $request)
 
     $stmt = $pdo->prepare("INSERT INTO barang (no_rumah, nama_barang, jumlah) VALUES (?, ?, ?)");
     $stmt->execute([$no_rumah, $nama_barang, $jumlah]);
-    logAktivitas('menambahkan data barang');
 }
 
 function edit(array $request)
@@ -63,5 +61,4 @@ function edit(array $request)
 
     $stmt = $pdo->prepare("UPDATE barang SET no_rumah = ?, nama_barang = ?, jumlah = ? WHERE id = ?");
     $stmt->execute([$no_rumah, $nama_barang, $jumlah, $id]);
-    logAktivitas('mengedit data barang');
 }

@@ -37,7 +37,6 @@ function delete($id)
     $stmt = $pdo->prepare("DELETE FROM kondisi_rumah WHERE id = :id");
     $stmt->execute(['id' => $id]);
     return $stmt->rowCount(); // Bisa digunakan untuk validasi apakah sukses/gagal
-    logAktivitas('Menghapus data rumah');
 }
 
 function showNoRumah()
@@ -51,21 +50,29 @@ function createRumah($request)
 {
     global $pdo;
 
-    // Upload foto
-    $foto = uploadFoto();
+    // Default kosong
+    
+
+    // Cek apakah ada file yang diupload
+    if (!empty($_FILES['foto']['name'])) {
+        $foto = uploadFoto();
+    }else{
+        $foto = "tidak ada foto";
+    }
+
 
     // Data yang akan disimpan
     $data = [
-        'no_rumah' => trim($_POST['no_rumah']),
-        'bangunan' => trim($_POST['bangunan']),
-        'terbuat_dari' => trim($_POST['terbuat_dari']),
-        'keadaan' => trim($_POST['keadaan']),
+        'no_rumah' => trim($request['no_rumah']),
+        'bangunan' => trim($request['bangunan']),
+        'terbuat_dari' => trim($request['terbuat_dari']),
+        'keadaan' => trim($request['keadaan']),
         'foto' => $foto
     ];
 
-    $stmt = $pdo->prepare("INSERT INTO kondisi_rumah (no_rumah, bangunan, terbuat_dari, keadaan, foto) VALUES (:no_rumah, :bangunan, :terbuat_dari, :keadaan, :foto)");
+    $stmt = $pdo->prepare("INSERT INTO kondisi_rumah (no_rumah, bangunan, terbuat_dari, keadaan, foto) 
+                        VALUES (:no_rumah, :bangunan, :terbuat_dari, :keadaan, :foto)");
     $stmt->execute($data);
-     logAktivitas('menambah data rumah');
 }
 
 function edit($request)
@@ -74,7 +81,7 @@ function edit($request)
 
     // Ambil data lama
     $stmt = $pdo->prepare("SELECT foto FROM kondisi_rumah WHERE id = :id");
-    $stmt->execute(['id' => $_POST['id']]);
+    $stmt->execute(['id' => $request['id']]);
     $oldData = $stmt->fetch(PDO::FETCH_ASSOC);
     $old_foto = $oldData['foto'] ?? null;
 
@@ -89,15 +96,14 @@ function edit($request)
     }
 
     $data = [
-        'no_rumah' => trim($_POST['no_rumah']),
-        'bangunan' => trim($_POST['bangunan']),
-        'terbuat_dari' => trim($_POST['terbuat_dari']),
-        'keadaan' => trim($_POST['keadaan']),
+        'no_rumah' => trim($request['no_rumah']),
+        'bangunan' => trim($request['bangunan']),
+        'terbuat_dari' => trim($request['terbuat_dari']),
+        'keadaan' => trim($request['keadaan']),
         'foto' => $new_foto,
-        'id' => $_POST['id']
+        'id' => $request['id']
     ];
 
     $stmt = $pdo->prepare("UPDATE kondisi_rumah SET no_rumah = :no_rumah, bangunan = :bangunan, terbuat_dari = :terbuat_dari, keadaan = :keadaan, foto = :foto WHERE id = :id");
     $stmt->execute($data);
-    logAktivitas('mengedit data rumah');
 }

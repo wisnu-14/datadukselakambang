@@ -1,6 +1,5 @@
 <?php
 require '../../app/database/connection.php';
-
 // Ambil semua data listrik
 function index()
 {
@@ -24,7 +23,6 @@ function delete($id)
     global $pdo;
     $stmt = $pdo->prepare("DELETE FROM listrik WHERE id = :id");
     $stmt->execute(['id' => $id]);
-    logAktivitas('Menghapus data listrik');
 }
 
 // Ambil data no_rumah dari data_keluarga
@@ -49,7 +47,6 @@ function create($request)
 
     $stmt = $pdo->prepare("INSERT INTO listrik (no_rumah, jenis, daya, menyalur_ke) VALUES (:no_rumah, :jenis, :daya, :menyalur_ke)");
     $stmt->execute($data);
-    logAktivitas('menambah data listrik');
 }
 
 // Update data listrik
@@ -67,5 +64,4 @@ function edit($request)
 
     $stmt = $pdo->prepare("UPDATE listrik SET no_rumah = :no_rumah, jenis = :jenis, daya = :daya, menyalur_ke = :menyalur_ke WHERE id = :id");
     $stmt->execute($data);
-    logAktivitas('mengedit data listrik');
 }

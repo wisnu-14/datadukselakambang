@@ -24,7 +24,6 @@ function delete($id)
     global $pdo;
     $stmt = $pdo->prepare("DELETE FROM buah WHERE id = :id");
     $stmt->execute(['id' => $id]);
-    logAktivitas('Menghapus data buah');
 }
 
 // Ambil semua nomor rumah dari data_keluarga
@@ -48,7 +47,6 @@ function create($request)
 
     $stmt = $pdo->prepare("INSERT INTO buah (no_rumah, nama_buah, jumlah) VALUES (:no_rumah, :nama_buah, :jumlah)");
     $stmt->execute($data);
-    logAktivitas('menambah data buah');
 }
 
 // Edit/update data buah
@@ -65,5 +63,4 @@ function edit($request)
 
     $stmt = $pdo->prepare("UPDATE buah SET no_rumah = :no_rumah, nama_buah = :nama_buah, jumlah = :jumlah WHERE id = :id");
     $stmt->execute($data);
-    logAktivitas('mengedit data buah');
 }

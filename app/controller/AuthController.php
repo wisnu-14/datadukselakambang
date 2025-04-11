@@ -1,7 +1,6 @@
 <?php
 session_start();
 require '../../app/database/connection.php';
-require '../../app/controller/LogsController.php';
 
 function generateCsrfToken()
 {
@@ -51,7 +50,6 @@ function registerUser($nik, $nama, $email, $username, $password, $role)
         $stmt = $pdo->prepare("INSERT INTO users (nik,nama,email,username, password, role) VALUES (?, ?, ?, ?, ?,?)");
         $stmt->execute([$nik, $nama, $email, $username, $hashedPassword, $role]);
 
-        logAktivitas("Menambahkan user baru: $username ($role)");
         return true;
     } catch (PDOException $e) {
         error_log("Register Error: " . $e->getMessage());
@@ -78,7 +76,6 @@ function editUser($request)
         $query = "UPDATE users SET nik=?, nama=?, username=?, role=?, password=? WHERE id=?";
         $stmt = $pdo->prepare($query);
         $stmt->execute(array_values($request));
-        logAktivitas('Edit user');
     } else {
         $request = [
             'nik' => $request['nik'],
@@ -90,7 +87,6 @@ function editUser($request)
         $query = "UPDATE users SET nik=?, nama=?, username=?, role=? WHERE id=?";
         $stmt = $pdo->prepare($query);
         $stmt->execute(array_values($request));
-        logAktivitas('Edit user');
     }
 }
 function loginUser($username, $password)
@@ -132,13 +128,11 @@ function logoutUser()
     }
     session_unset();
     session_destroy();
-    logAktivitas('Logout dari sistem');
 }
 function deleteUser($id)
 {
     global $pdo;
     $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
     $stmt->execute([$id]);
-    logAktivitas('Menghapus user');
     return true;
 }

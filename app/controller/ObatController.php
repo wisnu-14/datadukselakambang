@@ -24,7 +24,6 @@ function delete($id)
     global $pdo;
     $stmt = $pdo->prepare("DELETE FROM obat WHERE id = :id");
     $stmt->execute(['id' => $id]);
-    logAktivitas('Menghapus data obat');
 }
 
 // Ambil data no_rumah dari tabel data_keluarga
@@ -48,7 +47,6 @@ function create($request)
 
     $stmt = $pdo->prepare("INSERT INTO obat (no_rumah, nama_obat, jumlah) VALUES (:no_rumah, :nama_obat, :jumlah)");
     $stmt->execute($data);
-    logAktivitas('menambah data obat');
 }
 
 // Update data obat
@@ -65,5 +63,4 @@ function edit($request)
 
     $stmt = $pdo->prepare("UPDATE obat SET no_rumah = :no_rumah, nama_obat = :nama_obat, jumlah = :jumlah WHERE id = :id");
     $stmt->execute($data);
-    logAktivitas('menambah data obat');
 }

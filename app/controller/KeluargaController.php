@@ -20,7 +20,6 @@ function delete($id)
     global $pdo;
     $stmt = $pdo->prepare("DELETE FROM data_keluarga WHERE id=?");
     $stmt->execute([$id]);
-    logAktivitas('Menghapus data keluarga');
 }
 function create($request)
 {
@@ -53,7 +52,6 @@ function create($request)
     $stmt = $pdo->prepare("INSERT INTO data_keluarga (no_rumah, nama_pemilik, no_kk1, nama_kk1, no_kk2, nama_kk2, no_kk3, nama_kk3, alamat, rt, rw, no_telp, luas_tanah, sertifikat, belum_sertifikat, pemukiman, pertanian, pekarangan, pkh, sembako, rtlh, blt, lainnya)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute(array_values($request));
-    logAktivitas('menambah data keluarga');
 }
 function edit($request)
 {
@@ -97,7 +95,6 @@ function edit($request)
             WHERE id = ?");
 
         $stmt->execute(array_values($request));
-        logAktivitas('mengedit data keluarga');
     } catch (PDOException $e) {
         die("Error: " . $e->getMessage());
     }

@@ -22,7 +22,6 @@ function delete($id)
     $stmt = $pdo->prepare("DELETE FROM pangan WHERE id = :id");
     $stmt->execute(['id' => $id]);
     return $stmt->rowCount() > 0;
-    logAktivitas('Menghapus data pangan');
 }
 
 function showNoRumah()
@@ -43,7 +42,6 @@ function create($request)
 
     $stmt = $pdo->prepare("INSERT INTO pangan (no_rumah, nama_pangan, jumlah) VALUES (:no_rumah, :nama_pangan, :jumlah)");
     return $stmt->execute($data);
-     logAktivitas('menambah data pangan');
 }
 
 function edit($request)
@@ -58,5 +56,4 @@ function edit($request)
 
     $stmt = $pdo->prepare("UPDATE pangan SET no_rumah = :no_rumah, nama_pangan = :nama_pangan, jumlah = :jumlah WHERE id = :id");
     return $stmt->execute($data);
-    logAktivitas('mengedit data pangan');
 }

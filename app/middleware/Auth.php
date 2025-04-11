@@ -48,7 +48,7 @@ function adminMiddleware()
 {
     authMiddleware(); // Pastikan pengguna sudah login
 
-    if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'super_admin') {
+    if ($_SESSION['role'] == 'pengisi' ) {
         echo "<script>alert('Anda tidak memiliki hak untuk mengakses halaman ini!');window.location.href='../../views/rekap/rekap.php';</script>";
         exit();
     }

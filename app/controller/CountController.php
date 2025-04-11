@@ -49,16 +49,50 @@ function jumlahRumah()
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+date_default_timezone_set('Asia/Jakarta');
+
+
+function parseUserAgent($userAgent)
+{
+    $platform = 'Unknown';
+    $browser = 'Unknown';
+
+    // Deteksi Platform
+    if (preg_match('/windows nt 10/i', $userAgent)) {
+        $platform = 'Windows 10';
+    } elseif (preg_match('/windows nt 6.3/i', $userAgent)) {
+        $platform = 'Windows 8.1';
+    } elseif (preg_match('/macintosh|mac os x/i', $userAgent)) {
+        $platform = 'Mac OS';
+    } elseif (preg_match('/linux/i', $userAgent)) {
+        $platform = 'Linux';
+    }
+
+    // Deteksi Browser
+    if (preg_match('/edg/i', $userAgent)) {
+        $browser = 'Microsoft Edge';
+    } elseif (preg_match('/chrome/i', $userAgent) && !preg_match('/edg/i', $userAgent)) {
+        $browser = 'Google Chrome';
+    } elseif (preg_match('/firefox/i', $userAgent)) {
+        $browser = 'Mozilla Firefox';
+    } elseif (preg_match('/safari/i', $userAgent) && !preg_match('/chrome/i', $userAgent)) {
+        $browser = 'Safari';
+    }
+
+    return "$browser on $platform";
+}
+
 function logUserVisit()
 {
     global $pdo;
-    $ip_address = $_SERVER['REMOTE_ADDR']; 
-    $device_info = $_SERVER['HTTP_USER_AGENT']; 
-    $visit_time = date('Y-m-d H:i:s'); 
 
-    // Perbaikan query
-    $sql = "INSERT INTO visitors ( ip_address, device_info, visit_time) 
-            VALUES ( :ip_address, :device_info, :visit_time) 
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+    $raw_user_agent = $_SERVER['HTTP_USER_AGENT'];
+    $device_info = parseUserAgent($raw_user_agent); // Pakai hasil parsing
+    $visit_time = date('Y-m-d H:i:s');
+
+    $sql = "INSERT INTO visitors (ip_address, device_info, visit_time) 
+            VALUES (:ip_address, :device_info, :visit_time) 
             ON DUPLICATE KEY UPDATE visit_time = VALUES(visit_time)";
 
     $stmt = $pdo->prepare($sql);

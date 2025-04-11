@@ -24,7 +24,6 @@ function delete($id)
     global $pdo;
     $stmt = $pdo->prepare("DELETE FROM data_penduduk WHERE id = :id");
     $stmt->execute(['id' => $id]);
-    logAktivitas('Menghapus data penduduk');
 }
 
 // Tambah data penduduk
@@ -59,7 +58,6 @@ function create($request)
         )
     ");
     $stmt->execute($data);
-     logAktivitas('menambah data penduduk');
 }
 
 // Edit data penduduk
@@ -98,5 +96,4 @@ function edit($request)
         WHERE id = :id
     ");
     $stmt->execute($data);
-    logAktivitas('mengedit data penduduk');
 }

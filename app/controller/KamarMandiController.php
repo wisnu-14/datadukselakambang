@@ -31,9 +31,7 @@ function delete($id)
 
     $stmt = $pdo->prepare("DELETE FROM kamar_mandi WHERE id = ?");
     $stmt->execute([$id]);
-    logAktivitas('Menghapus data kamar mandi');
-    return $stmt->rowCount(); 
-    
+    return $stmt->rowCount();
 }
 
 function showNoRumah()
@@ -47,7 +45,11 @@ function create(array $request)
 {
     global $pdo;
 
-    $foto = uploadFoto();
+    if (!empty($_FILES['foto']['name'])) {
+        $foto = uploadFoto();
+    } else {
+        $foto = "tidak ada foto";
+    }
     $no_rumah = $request['no_rumah'] ?? null;
     $bangunan = $request['bangunan'] ?? null;
     $jenis = $request['jenis'] ?? null;
@@ -59,7 +61,6 @@ function create(array $request)
 
     $stmt = $pdo->prepare("INSERT INTO kamar_mandi (no_rumah, bangunan, jenis, keadaan, foto) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([$no_rumah, $bangunan, $jenis, $keadaan, $foto]);
-    logAktivitas('menambah data kamar mandi');
 }
 
 function edit(array $request)
@@ -94,5 +95,4 @@ function edit(array $request)
 
     $stmt = $pdo->prepare("UPDATE kamar_mandi SET no_rumah = ?, bangunan = ?, jenis = ?, keadaan = ?, foto = ? WHERE id = ?");
     $stmt->execute([$no_rumah, $bangunan, $jenis, $keadaan, $newFoto, $id]);
-    logAktivitas('mengedit data kamar mandi');
 }

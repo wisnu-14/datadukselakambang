@@ -194,6 +194,7 @@ if (isset($id)) {
                     <thead class="thead-dark">
                         <tr>
                             <th>No</th>
+                            <th>Status</th>
                             <th>ID</th>
                             <th>NIK</th>
                             <th>Nama</th>
@@ -211,6 +212,11 @@ if (isset($id)) {
                         ?>
                             <tr>
                                 <td><?= $no++; ?></td>
+                                <td>
+                                    <?php if (!empty($user['session_token'])): ?>
+                                        <span class="badge bg-success">Online</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= $user['id']; ?></td>
                                 <td><?= $user['nik']; ?></td>
                                 <td><?= $user['nama']; ?></td>
@@ -275,39 +281,6 @@ if (isset($id)) {
             </div>
         <?php else: ?>
         <?php endif; ?>
-
-        <div class="container py-5">
-            <h3 class="mb-4 text-center fw-bold">📋 Riwayat Aktivitas Pengguna</h3>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover shadow-sm bg-white">
-                    <thead class="text-center">
-                        <tr>
-                            <th>No</th>
-                            <th>Username</th>
-                            <th>Aksi</th>
-                            <th>Waktu</th>
-                        </tr>
-                    </thead>
-                    <tbody class="align-middle">
-                        <?php if (count($logs) > 0): ?>
-                            <?php foreach ($logs as $i => $log): ?>
-                                <tr>
-                                    <td class="text-center"><?= $i + 1 ?></td>
-                                    <td><?= htmlspecialchars($log['username']) ?></td>
-                                    <td><?= htmlspecialchars($log['action']) ?></td>
-                                    <td><?= date('d-m-Y H:i:s', strtotime($log['timestamp'])) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">Belum ada aktivitas.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
         <?php if ($_SESSION['role'] == 'SuperAdmin'): ?>
             <div class="table-container mt-5">
                 <h3 class="mt-5">Data Pengunjung</h3>

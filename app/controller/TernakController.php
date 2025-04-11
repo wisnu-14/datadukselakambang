@@ -1,6 +1,5 @@
 <?php
 require '../../app/database/connection.php';
-
 // Ambil semua data ternak
 function index()
 {
@@ -24,7 +23,6 @@ function delete($id)
     global $pdo;
     $stmt = $pdo->prepare("DELETE FROM ternak WHERE id = :id");
     $stmt->execute(['id' => $id]);
-    logAktivitas('Menghapus data ternak');
 }
 
 // Tampilkan no_rumah dari data_keluarga
@@ -48,7 +46,6 @@ function create($request)
 
     $stmt = $pdo->prepare("INSERT INTO ternak (no_rumah, nama_ternak, jumlah) VALUES (:no_rumah, :nama_ternak, :jumlah)");
     $stmt->execute($data);
-     logAktivitas('menambah data ternak');
 }
 
 // Edit data ternak
@@ -65,5 +62,4 @@ function edit($request)
 
     $stmt = $pdo->prepare("UPDATE ternak SET no_rumah = :no_rumah, nama_ternak = :nama_ternak, jumlah = :jumlah WHERE id = :id");
     $stmt->execute($data);
-    logAktivitas('mengedit data ternak');
 }
